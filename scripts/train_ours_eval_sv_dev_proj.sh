@@ -1,4 +1,4 @@
-export BASEPATH=/home/ofri/qa_translate
+export BASEPATH=.
 export PYTHONPATH=${BASEPATH}/src
 export DATAPATH=${BASEPATH}/data
 export CUDA_VISIBLE_DEVICES=0,1
