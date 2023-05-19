@@ -1,17 +1,16 @@
 import re
+import string
+import subprocess
 from string import ascii_letters
 from typing import List, Optional
-import subprocess
 
 import numpy as np
-import string
-
-from pythainlp import sent_tokenize
-from transformers import BertTokenizerFast
-
-from pythainlp.tokenize import word_tokenize
 import pynlpir
 from indicnlp.tokenize import sentence_tokenize
+from pythainlp import sent_tokenize
+from pythainlp.tokenize import word_tokenize
+from transformers import BertTokenizerFast
+
 
 class DictionaryLink:
     def __init__(self, object: dict, label: str):
@@ -47,7 +46,7 @@ class AlephBertTokenizerFast(BertTokenizerFast):
         return res
 
     def create_token_type_ids_from_sequences(
-        self, token_ids_0: List[int], token_ids_1: Optional[List[int]] = None
+            self, token_ids_0: List[int], token_ids_1: Optional[List[int]] = None
     ) -> List[int]:
         res = super().create_token_type_ids_from_sequences(token_ids_0, token_ids_1)
         return len(res) * [0]
@@ -123,7 +122,7 @@ class HtmlTagger:
         end_tags = len(re.findall(self.ender, sub))
         start_tags = len(re.findall(self.starter, sub)) - end_tags
 
-        return index-(end_tags * 6 + start_tags * 5)
+        return index - (end_tags * 6 + start_tags * 5)
 
     def fix_tags(self, text: str):
         tags = re.findall('</? ?[a-k]{3} ?>', text)
@@ -141,8 +140,6 @@ class HtmlTagger:
 
 
 class SentenceSpliter:
-
-
     abbreviations = ["St.", "No.", "Dr.", "Mr.", "Jr.", "vs.", "Inc.", "Mrs.", "Op.", "Corp.", "A.L.A.", "J.C.B.", "R.D.W.", "E.J.S.", "Bros.", "J.A.D.",
                      "Ecl.", "Col.", "T.R.M.", "U.S.C.", "Gen.", "Mt.", "Sch.", "ca.", "PT.", "Oct.", "Nov.", "Co.", "Lt.", "D.A.T.S.", "Lk.", "Capt.", "Adm.",
                      "Rev.", "Fr.", "BC–c."]
@@ -178,6 +175,7 @@ class SentenceSpliter:
             out.append(" ".join(current))
         return out
 
+
 class WordSpliter:
 
     @classmethod
@@ -190,6 +188,7 @@ class ThaiSentenceSpliter(SentenceSpliter):
     def sentence_split(cls, s: str, full_stop: str = ".") -> List[str]:
         return sent_tokenize(s, keep_whitespace=False)
 
+
 class ChineseSentenceSpliter(SentenceSpliter):
     @classmethod
     def sentence_split(cls, s: str, full_stop: str = "。") -> List[str]:
@@ -200,7 +199,6 @@ class IndicSentenceSpliter(SentenceSpliter):
     @classmethod
     def sentence_split(cls, s: str, full_stop: str = ".") -> List[str]:
         return sentence_tokenize.sentence_split(s, lang='hi')
-
 
 
 class ThaiWordSpliter(WordSpliter):
@@ -215,6 +213,7 @@ class ThaiWordSpliter(WordSpliter):
 
 class ChineseWordSpliter(WordSpliter):
     pynlpir.open()
+
     @classmethod
     def word_split(cls, s: str) -> List[str]:
         try:

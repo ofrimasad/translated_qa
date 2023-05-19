@@ -7,7 +7,6 @@ from services.abstract_service import AbstractTranslationService
 
 
 class ModelTranslate(AbstractTranslationService):
-
     TEXT_SEPARATOR = "\n\n"
 
     def __init__(self, source: Type[Language], target: Type[Language]):
@@ -28,4 +27,3 @@ class ModelTranslate(AbstractTranslationService):
         encoded = self.tokenizer(texts, return_tensors="pt", truncation=True, padding=True, max_length=2000).to("cuda:0")
         generated_tokens = self.model.generate(**encoded, forced_bos_token_id=self.tokenizer.get_lang_id(self.target.symbol))
         return self.tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
-

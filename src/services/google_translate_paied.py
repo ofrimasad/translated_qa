@@ -8,7 +8,6 @@ from services.abstract_service import AbstractTranslationService
 
 
 class GoogleTranslateP(AbstractTranslationService):
-
     TEXT_SEPARATOR = "\n\n"
 
     def __init__(self, source: Type[Language], target: Type[Language]):
@@ -19,7 +18,6 @@ class GoogleTranslateP(AbstractTranslationService):
         self.parent = f"projects/norm-deconv/locations/global"
 
     def translate(self, text: str) -> str:
-
         response = self.translator.translate_text(
             request={
                 "parent": self.parent,
@@ -36,6 +34,7 @@ class GoogleTranslateP(AbstractTranslationService):
     @property
     def separator(self) -> str:
         return "<lbr>"
+
 
 # Initialize Translation client
 def translate_text(text="YOUR_TEXT_TO_TRANSLATE", project_id="norm-deconv"):

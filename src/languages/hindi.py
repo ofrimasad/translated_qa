@@ -1,4 +1,3 @@
-import re
 from typing import List
 
 from languages.abstract_language import Language
@@ -6,7 +5,6 @@ from utils.translation_utils import IndicSentenceSpliter
 
 
 class Hindi(Language):
-
     symbol = "hi"
 
     @classmethod

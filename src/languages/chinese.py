@@ -5,7 +5,6 @@ from utils.translation_utils import ChineseWordSpliter, ChineseSentenceSpliter
 
 
 class Chinese(Language):
-
     symbol = "zh-CN"
 
     @classmethod

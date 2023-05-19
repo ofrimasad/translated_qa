@@ -5,7 +5,6 @@ from utils.translation_utils import ThaiSentenceSpliter, ThaiWordSpliter
 
 
 class Thai(Language):
-
     symbol = "th"
 
     @classmethod

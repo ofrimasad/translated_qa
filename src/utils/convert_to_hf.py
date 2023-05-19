@@ -52,7 +52,6 @@ In the process, impossible questions can be filtered out
 
 """
 
-
 import argparse
 import json
 
@@ -87,11 +86,11 @@ def squad_to_huggingface(squad_data: list, with_impossible: bool = False) -> lis
 
     return new_data
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('input_path', type=str)
-    parser.add_argument('--with_impossible', action='store_true',)
+    parser.add_argument('--with_impossible', action='store_true', )
 
     opt = parser.parse_args()
 

@@ -9,7 +9,6 @@ from services.abstract_service import AbstractTranslationService
 
 
 class GoogleTranslate(AbstractTranslationService):
-
     TEXT_SEPARATOR = "\n\n"
     DELAYS = [0, 1, 5, 30, 30]
 
@@ -21,10 +20,8 @@ class GoogleTranslate(AbstractTranslationService):
         for delay in self.DELAYS:
             time.sleep(delay)
             try:
-                translation =  self.translator.translate(text)
+                translation = self.translator.translate(text)
                 return translation
             except (TooManyRequests, RuntimeError):
                 continue
         raise TooManyRequests
-
-

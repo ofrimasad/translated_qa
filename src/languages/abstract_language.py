@@ -4,7 +4,6 @@ from utils.translation_utils import WordSpliter, SentenceSpliter
 
 
 class Language:
-
     symbol = ""
     alphabet = ""
     valid_chars = ".,:;'\"()[]{}?!@#$%&- \t"
@@ -34,5 +33,3 @@ class Language:
     @classmethod
     def split_to_sentences(cls, text: str) -> List[str]:
         return SentenceSpliter.sentence_split(text)
-
-

@@ -1,6 +1,7 @@
 import argparse
 import json
 import logging
+import os
 import random
 import re
 import sys
@@ -8,7 +9,6 @@ from os import path
 from typing import List
 
 import numpy as np
-import os
 from deep_translator.exceptions import NotValidPayload, NotValidLength, RequestError, TranslationNotFound
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
@@ -121,7 +121,8 @@ def init_writer(_opt: argparse.Namespace, target: Language) -> SummaryWriter:
     writer.add_hparams(hparam_dict=_opt.__dict__, metric_dict={})
     return writer
 
-def find_shortest(start_with:str, end_with:str, text:str) -> List[str]:
+
+def find_shortest(start_with: str, end_with: str, text: str) -> List[str]:
     start_loc = [i.regs[0][0] for i in re.finditer(re.escape(start_with), text)]
     end_loc = [i.regs[0][1] for i in re.finditer(re.escape(end_with), text)]
 
@@ -230,11 +231,7 @@ if __name__ == "__main__":
                             phrase_translated = translated_tokens[start]
                         else:
                             instances = find_shortest(translated_tokens[start], translated_tokens[start + span], sentence)
-                                # re.findall(rf"{re.escape(translated_tokens[start])}.*?{re.escape(translated_tokens[start + span - 1])}",
-                                #                    sentence)  # " ".join(translated_tokens[start: start + span])
-                            # if len(instances) != 1:
-                            #     logger.debug('multiple instance')
-                            #     continue
+
                             if len(instances) < 1:
                                 logger.debug('cant find')
                                 continue
@@ -278,10 +275,8 @@ if __name__ == "__main__":
                                                                                                                     re_translated_phrases,
                                                                                                                     inv_translated_phrases):
 
-                    # if context == last_context and len(qas) >= opt.num_phrases_in_sentence:
-                    #     continue
 
-                    if context != last_context: # when context changed - save new paragraph
+                    if context != last_context:  # when context changed - save new paragraph
                         if len(qas) > 0:
                             stats.num_sentences += 1
                             writer.add_scalar(tag='generated_instances', scalar_value=stats.num_possible_questions, global_step=global_step)
@@ -320,7 +315,6 @@ if __name__ == "__main__":
                             logger.debug('same translation')
 
                     next_id += 1
-
 
         # add impossible
         add_impossibles(new_paragraphs, stats, next_id=70000000000000000000)
