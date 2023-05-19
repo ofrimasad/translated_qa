@@ -1,2 +1,13 @@
-transformers
-datasets
+numpy
+tqdm
+
+transformers~=4.24.0
+datasets~=2.6.1
+sentence-transformers
+
+deep-translator
+googletrans==4.0.0rc1
+pythainlp
+python-crfsuite
+indic-nlp-library
+PyNLPIR

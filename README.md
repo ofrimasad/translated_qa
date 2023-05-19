@@ -1,7 +1,8 @@
-# Two-step Approach for automatically translating span-dependent datasets - official repo
+# Automatic Translation of Span-Prediction Datasets - official repo
 
 
-This repo contains the Datasets reported in the paper and the code required to reproduce them.
+This repo contains the Datasets reported in the paper and the code required to reproduce them,
+as well as the code to generate a new dataset
 
 
 ## requirements
@@ -16,7 +17,7 @@ conda ctreate --name <env_name> python=3.7
 ```
 
 
-install the required packages (basically just `transformers` and `datasets`)
+install the required packages
 ```bash
 pip install -r requirements.txt
 ```
@@ -80,4 +81,46 @@ Paper: [Reading Comprehension in Czech via Machine Translation and Cross-lingual
 GitHub Repository: [Czech-Question-Answering](https://github.com/kackamac/Czech-Question-Answering)
 * We did not manage to reproduce the results reported in the original paper
 
+
+# Translating to a New Language
+To translate to a new language, start by implementing a class inheriting from [languages.abstract_language](./src/languages/abstract_language.py). make sure to define the `symbol` parameter by the 
+language symbol in [Google Translate](https://cloud.google.com/translate/docs/languages)
+
+### Generate base translation
+start by generating the base translation This will take a few hours.
+```commandline
+python ./src/translate/translate_squad_to_base.py </path/to/train-v1.1.json> <language_symbol>
+python ./src/translate/translate_squad_to_base.py </path/to/dev-v1.1.json> <language_symbol>
+```
+a new file will be generated in next to your train-v1.1.json with the name train-v1.1_<language_symbol>_base.json
+
+### Generate the matcher dataset
+To generate the dataset that will be used to train the alignment model.
+We generate a train end validation set
+```commandline
+python ./src/matcher/generate_matcher_dataset.py <path/to/train-v1.1_<language_symbol>_base.json> <language_symbol> --out_dir </path/to/output_dir> --enq --num_phrases_in_sentence=10 --translated --hf;
+python ./src/matcher/generate_matcher_dataset.py <path/to/dev-v1.1_<language_symbol>_base.json> <language_symbol> --out_dir </path/to/output_dir> --enq --num_phrases_in_sentence=10 --translated --hf
+```
+This will generate two files in your output directory:
+- train set file: train-v1.1_<language_symbol>_base_matcher_<language_symbol>_enq.json
+- dev set file: dev-v1.1_<language_symbol>_base_matcher_<language_symbol>_enq.json
+- 
+The generated files will be in HuggingFace QA dataset format (ready to be trained using transformers library)
+
+### Train the Alignment model
+Next we will train the alignment model.
+Note that this phase will preferably should be carried on a machine with a GPU
+```commandline
+bash ./scripts/train_matcher.sh <path/to/train-v1.1_<language_symbol>_base_matcher_<language_symbol>_enq.json> dev-v1.1_<language_symbol>_base_matcher_<language_symbol>_enq.json <language_symbol>
+```
+
+The results of the training will be saved in ./matcher_exp/train_matcher_<language_symbol>
+
+### Translate and Align the final dataset
+Finally, we will use the trained Alignment model to align the results from the base file
+```commandline
+python ./src/translate/translate_from_base.py <path/to/train-v1.1_<language_symbol>_base.json> <language_symbol> <./matcher_exp/train_matcher_<language_symbol>> --from_en
+python ./src/translate/translate_from_base.py <path/to/dev-v1.1_<language_symbol>_base.json> <language_symbol> <./matcher_exp/train_matcher_<language_symbol>> --from_en
+```
+The two files of your new dataset will be generated
 
